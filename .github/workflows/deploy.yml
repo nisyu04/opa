@@ -2,8 +2,7 @@ name: Deploy to OpenShift
 
 on:
   push:
-    branches:
-      - main
+    branches: [ master ]
 
 jobs:
   deploy:
@@ -19,14 +18,15 @@ jobs:
         tar -xvzf openshift-client-linux-4.9.18.tar.gz
         sudo mv oc /usr/local/bin/
         oc version
-        
-    - name: Login to OpenShift
-      run: |
-        oc login --server=${{ secrets.OPENSHIFT_SERVER }} \
-          --token=${{ secrets.OPENSHIFT_TOKEN }} \
-          --insecure-skip-tls-verify=true
+
+    - name: Log in to OpenShift 
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+        openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+        insecure_skip_tls_verify: true
+        namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
 
     - name: Apply Manifest
       run: |
-        oc project ${{ secrets.OPENSHIFT_NAMESPACE }}
         oc apply -f deployment.yaml
