@@ -15,12 +15,6 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Install OpenShift CLI
-      run: |
-        curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
-        tar -xzf oc.tar.gz
-        sudo mv oc /usr/local/bin
-
     - name: Login to OpenShift
       run: |
         oc login --server=${{ secrets.OPENSHIFT_SERVER }} \
