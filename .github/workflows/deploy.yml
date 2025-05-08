@@ -1,5 +1,10 @@
 name: Deploy to OpenShift
 
+env: 
+  OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+  OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+  OPENSHIFT_NAMESPACE: "%PROJECT%"
+
 on:
   push:
     branches: [ main ]
@@ -15,10 +20,10 @@ jobs:
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
-        openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-        openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+        openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
+        openshift_token: ${{ env.OPENSHIFT_TOKEN }}
         insecure_skip_tls_verify: true
-        namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
+        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
     - name: Apply Manifest
       run: |
