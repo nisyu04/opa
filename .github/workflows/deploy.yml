@@ -12,13 +12,6 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
-    - name: Set up OpenShift CLI
-      run: |
-        curl -LO https://github.com/openshift/okd/releases/download/release-4.9.18/openshift-client-linux-4.9.18.tar.gz
-        tar -xvzf openshift-client-linux-4.9.18.tar.gz
-        sudo mv oc /usr/local/bin/
-        oc version
-
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
