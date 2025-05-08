@@ -1,0 +1,33 @@
+name: Deploy to OpenShift
+
+on:
+  push:
+    paths:
+      - nginx-deployment.yaml
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Install OpenShift CLI
+      run: |
+        curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
+        tar -xzf oc.tar.gz
+        sudo mv oc /usr/local/bin
+
+    - name: Login to OpenShift
+      run: |
+        oc login ${{ secrets.OPENSHIFT_SERVER }} \
+          --token=${{ secrets.OPENSHIFT_TOKEN }} \
+          --insecure-skip-tls-verify=true
+
+    - name: Apply Manifest
+      run: |
+        oc project ${{ secrets.OPENSHIFT_NAMESPACE }}
+        oc apply -f nginx-deployment.yaml
