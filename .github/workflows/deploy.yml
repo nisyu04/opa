@@ -21,5 +21,7 @@ jobs:
         namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
 
     - name: Apply Manifest
+      #run: |
+       # oc apply -f nginx-deployment.yaml
       run: |
-        oc apply -f nginx-deployment.yaml
+       oc get resourcequotas
