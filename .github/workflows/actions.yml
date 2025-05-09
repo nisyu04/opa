@@ -1,5 +1,9 @@
 name: Deploy to OpenShift
 
+env:
+  OPENSHIFT_SERVER: ${{ vars.OPENSHIFT_SERVER }}
+  OPENSHIFT_NAMESPACE: ${{ vars.OPENSHIFT_NAMESPACE }}
+
 on:
   push:
     branches: [ main ]
