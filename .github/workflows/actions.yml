@@ -15,7 +15,7 @@ jobs:
     - name: Get OpenShift Token
       id: get-token
       run: |
-        TOKEN=$(oc create token github-actions-sa -n ynishizaki-dev --duration 360m)
+        TOKEN=$(oc create token github-actions-sa -n "${{ secrets.OPENSHIFT_NAMESPACE }}" --duration 360m)
         echo "::add-mask::$TOKEN"
         echo "OPENSHIFT_TOKEN=$TOKEN" >> $GITHUB_ENV
 
