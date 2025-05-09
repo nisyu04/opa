@@ -14,7 +14,6 @@ metadata:
   name: deny-resourcequota-binding
   namespace: ynishizaki-dev
 subjects:
-subjects:
 - kind: ServiceAccount
   name: github-actions-sa
   namespace: ynishizaki-dev
