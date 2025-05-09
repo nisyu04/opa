@@ -33,4 +33,5 @@ jobs:
 
     - name: Apply Manifest
       run: |
+       set -e
        oc apply -f ./manifests/
