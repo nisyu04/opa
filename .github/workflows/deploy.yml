@@ -6,18 +6,11 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
-
-    - name: Install OpenShift CLI
-      run: |
-        curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
-        tar -xzf openshift-client-linux.tar.gz
-        sudo mv oc kubectl /usr/local/bin/
-        oc version --client
 
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
