@@ -22,4 +22,4 @@ jobs:
 
     - name: Apply Manifest
       run: |
-       oc apply -f my-resource-quota.yaml
+       oc apply -f ./manifests/
