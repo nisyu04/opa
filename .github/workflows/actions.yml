@@ -3,6 +3,9 @@ name: Deploy to OpenShift
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches:
+      -  [ main ]
 
 jobs:
   deploy:
@@ -11,12 +14,20 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
+      
+    - name: Get OpenShift Token
+      id: get-token
+      run: |
+        TOKEN=$(oc create token github-actions-sa -n ynishizaki-dev --duration=3600)
+        echo "::add-mask::$TOKEN"
+        echo "OPENSHIFT_TOKEN=$TOKEN" >> $GITHUB_ENV
+
 
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
       with:
         openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-        openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+        openshift_token: ${{ env.OPENSHIFT_TOKEN }}
         insecure_skip_tls_verify: true
         namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
 
