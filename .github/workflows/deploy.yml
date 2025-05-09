@@ -22,4 +22,4 @@ jobs:
 
     - name: Apply Manifest
       run: |
-        oc apply -f deployment.yaml
+        oc apply -f nginx-deployment.yaml
