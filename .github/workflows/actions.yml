@@ -30,7 +30,6 @@ jobs:
         REVIEWERS=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${CODEOWNER}/${REPO}/pulls/${PR_NUMBER}/requested_reviewers)
         REVIEWER_NAME=$(echo "$REVIEWERS" | jq -r '.users[0].login')
         
-        echo "REVIEWER_NAME=$REVIEWER_NAME" >> $GITHUB_ENV
         YAML_FILE=$(mktemp).yaml
         cat <<EOF > "$YAML_FILE"
         reviewer:
