@@ -1,13 +1,13 @@
 # policy/manifest.rego
-package guardrails
+package main
 
-code_owners = {"admin", "dev-lead"}
+code_owners = {"admin"}
 
 protected_kinds = {"ResourceQuota"}
 
-deny[msg] {
+deny if {
   input._user != ""
-  input.kind == protected_kinds[_]
+  protected_kinds[input.kind]
   not code_owners[input._user]
   msg := sprintf("ユーザー '%s' は %s を変更できません", [input._user, input.kind])
 }
