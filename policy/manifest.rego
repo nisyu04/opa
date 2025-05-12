@@ -1,7 +1,7 @@
 # policy/manifest.rego
-package guardrails
+package main
 
-code_owners = {"admin", "dev-lead"}
+code_owners = {"admin"}
 
 protected_kinds = {"ResourceQuota"}
 
