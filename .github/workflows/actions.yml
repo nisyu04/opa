@@ -28,7 +28,9 @@ jobs:
         PR_NUMBER=${{ github.event.pull_request.number }}
 
         REVIEWERS=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${CODEOWNER}/${REPO}/pulls/${PR_NUMBER}/requested_reviewers)
+        echo $REVIEWERS
         REVIEWER_NAME=$(echo "$REVIEWERS" | jq -r '.users[0].login')
+        echo $REVIEWER_NAME
         
         YAML_FILE=$(mktemp).yaml
         cat <<EOF > "$YAML_FILE"
