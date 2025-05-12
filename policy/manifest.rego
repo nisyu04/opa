@@ -1,12 +1,12 @@
 # policy/manifest.rego
 package main
 
+import data.allowed_merge_user
+import data.deny_kinds
 import data.reviewer
-reviewuser := reviewer._user
-codeowner := reviewer.owner
 
 deny contains msg if {
-  reviewuser != codeowner
-  input.kind == "ResourceQuota"
-  msg := sprintf("レビュアー '%s' は %s を変更できません", [reviewuser, input.kind])
+  reviewer != allowed_merge_user
+  input.kind in deny_kinds
+  msg := sprintf("レビュアー '%s' は %s を変更できません", [reviewer, input.kind])
 }
