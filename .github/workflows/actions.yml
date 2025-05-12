@@ -26,6 +26,6 @@ jobs:
         actor="${{ github.actor }}"
         while IFS= read -r file; do
           if [[ "$file" == *.yaml || "$file" == *.yml ]]; then
-            conftest test "$file" --input yaml --namespace ${{ env.OPENSHIFT_NAMESPACE }} --data <(echo '{"_user": "'"$actor"'"}')
+            conftest test "$file" --namespace ${{ env.OPENSHIFT_NAMESPACE }} --data <(echo '{"_user": "'"$actor"'"}')
           fi
         done < changed.txt
