@@ -5,33 +5,28 @@ env:
   OPENSHIFT_NAMESPACE: ${{ vars.OPENSHIFT_NAMESPACE }}
 
 on:
-  push:
-    branches: [ main ]
+  pull_request:
+    paths:
+      - '**/*.yaml'
 
 jobs:
-  deploy:
+  validate:
     runs-on: self-hosted
-
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
       
-    - name: Get OpenShift Token
-      id: get-token
+    - name: Get changed files
+      id: changes
       run: |
-        TOKEN=$(oc create token github-actions-sa -n "${{ env.OPENSHIFT_NAMESPACE }}" --duration 360m)
-        echo "::add-mask::$TOKEN"
-        echo "OPENSHIFT_TOKEN=$TOKEN" >> $GITHUB_ENV
+        git fetch origin main
+        git diff --name-only origin/main > changed.txt
 
-    - name: Log in to OpenShift 
-      uses: redhat-actions/oc-login@v1
-      with:
-        openshift_server_url: ${{ env.OPENSHIFT_SERVER }}
-        openshift_token: ${{ env.OPENSHIFT_TOKEN }}
-        insecure_skip_tls_verify: true
-        namespace: ${{ env.OPENSHIFT_NAMESPACE }}
-
-    - name: Apply Manifest
+    - name: Run conftest
       run: |
-       oc apply -f ./manifests/
-       exit 1
+        actor="${{ github.actor }}"
+        while IFS= read -r file; do
+          if [[ "$file" == *.yaml || "$file" == *.yml ]]; then
+            conftest test "$file" --input yaml --namespace guardrails --data <(echo '{"_user": "'"$actor"'"}')
+          fi
+        done < changed.txt
