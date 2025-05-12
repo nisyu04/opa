@@ -5,7 +5,7 @@ code_owners = {"admin"}
 
 protected_kinds = {"ResourceQuota"}
 
-deny[msg] {
+deny if {
   input._user != ""
   protected_kinds[input.kind]
   not code_owners[input._user]
