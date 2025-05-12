@@ -1,8 +1,5 @@
 name: policy-validation
 
-env:
-  OPENSHIFT_NAMESPACE: ${{ vars.OPENSHIFT_NAMESPACE }}
-
 on:
   pull_request:
     paths:
@@ -23,9 +20,31 @@ jobs:
 
     - name: Run conftest
       run: |
-        actor="${{ github.actor }}"
+        OWNER="${{ github.repository_owner }}"
+        REPO="${{ github.repository }}"
+        GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+        CODEOWNERS_PATH=".github/CODEOWNERS"
+
+        curl -H "Authorization: token $GITHUB_TOKEN" \
+             -H "Accept: application/vnd.github.v3.raw" \
+             "https://api.github.com/repos/$OWNER/$REPO/contents/$CODEOWNERS_PATH"
+        PR_NUMBER=${{ github.event.pull_request.number }}
+
+        REVIEWERS=$(curl -s \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}}/requested_reviewers")
+        
+        REVIEWER_NAME=$(echo "$REVIEWERS" | jq -r '.users[0].login')
+        
+        echo "REVIEWER_NAME=$REVIEWER_NAME" >> $GITHUB_ENV
+        YAML_FILE=$(mktemp).yaml
+        cat <<EOF > "$YAML_FILE"
+        reviewer:
+          _user: $REVIEWER_NAME
+        EOF
         while IFS= read -r file; do
           if [[ "$file" == *.yaml || "$file" == *.yml ]]; then
-            conftest test "$file" --namespace ${{ env.OPENSHIFT_NAMESPACE }} --data <(echo '{"_user": "'"$actor"'"}')
+            conftest test "$file" --data $YAML_FILE
           fi
         done < changed.txt
+        rm -f $YAML_FILE

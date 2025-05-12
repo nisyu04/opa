@@ -1,8 +1,12 @@
 # policy/manifest.rego
 package main
 
-deny if {
-  input._user != "nisyu04"
-  input.kind = "ResourceQuota"
-  msg := sprintf("レビュアー '%s' は %s を変更できません", [input._user, input.kind])
+import data.reviewer
+user := reviewer._user
+codeowner := "nisyu04"
+
+deny contains msg if {
+  user != codeowner
+  input.kind == "ResourceQuota"
+  msg = "レビュアー '%s' は %s を変更できません"
 }
