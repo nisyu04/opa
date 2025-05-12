@@ -5,7 +5,7 @@ metadata:
   namespace: ynishizaki-dev
 spec:
   hard:
-    requests.cpu: "1"
+    requests.cpu: "4"
     requests.memory: 8Gi
-    limits.cpu: "1"
+    limits.cpu: "7"
     limits.memory: 10Gi
