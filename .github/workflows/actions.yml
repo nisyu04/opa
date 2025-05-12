@@ -34,6 +34,7 @@ jobs:
           owner: $CODEOWNER
           _user: $REVIEWER_NAME
         EOF
+        cat "yaml content" $YAML_FILE
         echo "Code Owner Reviewer " $CODEOWNER $REVIEWER_NAME
         while IFS= read -r file; do
           if [[ "$file" == *.yaml || "$file" == *.yml ]]; then
