@@ -2,11 +2,11 @@
 package main
 
 import data.reviewer
-user := reviewer._user
-codeowner := "nisyu04"
+review_user := reviewer._user
+codeowner := reviewer.owner
 
 deny contains msg if {
-  user != codeowner
+  review_user != codeowner
   input.kind == "ResourceQuota"
   msg = "レビュアー '%s' は %s を変更できません"
 }

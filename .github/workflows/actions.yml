@@ -25,9 +25,11 @@ jobs:
         GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
         CODEOWNERS_PATH=".github/CODEOWNERS"
 
-        curl -H "Authorization: token $GITHUB_TOKEN" \
-             -H "Accept: application/vnd.github.v3.raw" \
-             "https://api.github.com/repos/$OWNER/$REPO/contents/$CODEOWNERS_PATH"
+        curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+         -H "Accept: application/vnd.github.v3.raw" \
+         "https://api.github.com/repos/$OWNER/$REPO/contents/$CODEOWNERS_PATH" \
+         -o codeowners.txt
+        CODEOWNER=$(grep -v '^#' codeowners.txt | head -n 1 | grep -o "@[^ ]*")
         PR_NUMBER=${{ github.event.pull_request.number }}
 
         REVIEWERS=$(curl -s \
@@ -40,6 +42,7 @@ jobs:
         YAML_FILE=$(mktemp).yaml
         cat <<EOF > "$YAML_FILE"
         reviewer:
+          owner: $CODEOWNER
           _user: $REVIEWER_NAME
         EOF
         while IFS= read -r file; do
