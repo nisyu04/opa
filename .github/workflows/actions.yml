@@ -25,10 +25,8 @@ jobs:
         CODEOWNER=nisyu04
         PR_NUMBER=${{ github.event.pull_request.number }}
 
-        REVIEWERS=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository_owner }}/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers)
-        echo $REVIEWERS
+        REVIEWERS=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers)
         REVIEWER_NAME=$(echo "$REVIEWERS" | jq -r '.users[0].login')
-        echo $REVIEWER_NAME
         
         YAML_FILE=$(mktemp).yaml
         cat <<EOF > "$YAML_FILE"
@@ -40,5 +38,5 @@ jobs:
           if [[ "$file" == *.yaml || "$file" == *.yml ]]; then
             conftest test "$file" --data $YAML_FILE
           fi
-        done < changed.txt
+        done
         rm -f $YAML_FILE
