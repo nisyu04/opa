@@ -30,15 +30,11 @@ jobs:
         
         YAML_FILE=$(mktemp).yaml
         cat <<EOF > "$YAML_FILE"
-        reviewer:
-          owner: $CODEOWNER
-          _user: $REVIEWER_NAME
+        reviewer: $REVIEWER_NAME
         EOF
-        cat $YAML_FILE
-        echo "Code Owner Reviewer " $CODEOWNER $REVIEWER_NAME
         while IFS= read -r file; do
           if [[ "$file" == *.yaml || "$file" == *.yml ]]; then
-            conftest test "$file" --data $YAML_FILE
+            conftest test "$file" -p policy --data $YAML_FILE --data policy/policy.yaml
           fi
         done < changed.txt
         rm -f $YAML_FILE
