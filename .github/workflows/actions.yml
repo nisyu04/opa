@@ -20,22 +20,9 @@ jobs:
 
     - name: Run conftest
       run: |
-        GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-
-        CODEOWNER=nisyu04
-        PR_NUMBER=${{ github.event.pull_request.number }}
-
-        REVIEWERS=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers)
-        REVIEWER_NAME=$(echo "$REVIEWERS" | jq -r '.users[0].login')
-        
-        YAML_FILE=$(mktemp).yaml
-        cat <<EOF > "$YAML_FILE"
-        reviewer: $REVIEWER_NAME
-        EOF
         while IFS= read -r file; do
           if [[ "$file" == *.yaml || "$file" == *.yml ]]; then
-            conftest test "$file" -p policy --data $YAML_FILE --data policy/policy.yaml
+            conftest test "$file" -p policy --data policy/policy.yaml
           fi
         done < changed.txt
-        rm -f $YAML_FILE
-        rm -f changed.txt
+        rm -f $YAML_FILE changed.txt
